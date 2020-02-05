@@ -35,13 +35,17 @@ unintentionally).
   also set it as a percentage of the size of the webpage (or container). For
   example, you can set your img width to 50% and it will occupy half of the
   width of the page, even as you change your window size.
+
 ### Tables
-  * `<tr>`: table row
-  * `<th>`: table header, i.e. column names
-  * `<tr>`: table row
-  * `<td>`: table data, contains the data you put in `<tr>`'s
+  
+* `<tr>`: table row
+* `<th>`: table header, i.e. column names
+* `<tr>`: table row
+* `<td>`: table data, contains the data you put in `<tr>`'s
+
 ### Forms
-  * Like `<img>` tags, `<input>` tags don't have a start & end tags, they do
+
+* Like `<img>` tags, `<input>` tags don't have a start & end tags, they do
   need attributes to define their functionality though.
 
 ### Document Object Model (DOM)
