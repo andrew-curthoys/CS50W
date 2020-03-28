@@ -1,0 +1,21 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Results
+{% endblock %}
+
+{% block main %}
+
+    <body>
+
+        <div class="card">
+            <h5 class="card-header">Error</h5>
+            <div class="card-body">
+                <p class="card-text">{{ error_message }}</p>
+                <a href="/" class="btn btn-primary" type="button">Retry</a>
+            </div>
+        </div>
+
+    </body>
+
+{% endblock %}

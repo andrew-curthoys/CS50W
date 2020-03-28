@@ -25,9 +25,40 @@ engine = create_engine(os.getenv("DATABASE_URL"))
 db = scoped_session(sessionmaker(bind=engine))
 
 
-@app.route("/")
+@app.route("/", methods=["GET", "POST"])
 def index():
-    return render_template("index.html")
+    if request.method == "GET":
+        return render_template("index.html")
+
+    if request.method == "POST":
+        # Check that a username & password has been entered
+        if not request.form.get("username") or not request.form.get("password"):
+            error_message = "Please provide a username and password"
+            return render_template("error.html", error_message=error_message)
+
+        # Get username & password and check against database
+        username = request.form.get("username")
+        password = request.form.get("password")
+        login_data = db.execute("""SELECT * from "Users" WHERE username = :username""",
+                                {"username": username}).fetchone()
+
+        # Check that username/password match an entry in the database
+        if login_data is None :
+            error_message = "Username not found, please retry"
+            return render_template("error.html", error_message=error_message)
+
+        # Check password against database
+        db_password = login_data[2]
+        print(f"password = {password}")
+        print(f"db_password = {db_password}")
+        if password != db_password:
+            error_message = "Incorrect password, please retry"
+            return render_template("error.html", error_message=error_message)
+
+        # Set session
+        session["username"] = username
+
+        return render_template("/search.html")
 
 
 @app.route("/search", methods=["GET", "POST"])
