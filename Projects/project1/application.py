@@ -84,13 +84,25 @@ def search():
 
         # Create table data to pass through to results template
         table_data = [Book_data(isbn, title, author, year, avg_rating, ratings_count)
-                      for isbn, title, author, year, avg_rating, ratings_count, in zip(isbns, titles, authors, years, avg_ratings, ratings_counts)]
+                      for isbn, title, author, year, avg_rating, ratings_count, in
+                      zip(isbns, titles, authors, years, avg_ratings, ratings_counts)]
 
     return render_template("search_results.html", table_data=table_data)
 
+
 @app.route("/register", methods=["GET", "POST"])
 def register():
-    return render_template("register.html")
+    if request.method == "GET":
+        return render_template("register.html")
+
+    if request.method == "POST":
+        username = request.form.get("username")
+        password = request.form.get("password")
+
+        db.execute("""INSERT INTO "Users" (username, password) VALUES (:username, :password)""",
+                   {"username": username, "password": password})
+        db.commit()
+    return "Registered!"
 
 
 @app.route("/book", methods=["GET"])
