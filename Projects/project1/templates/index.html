@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Welcome
+{% endblock %}
+
+{% block main %}
+    <div class="container">
+        <h2>Welcome to CS50W Book Reviews!</h2>
+        <h5 class="text-muted">Login below or select register to create a new user</h4>
+    </div>
+    <form action="/search" method="post">
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="username" placeholder="Username" type="text">
+        </div>
+        <div class="form-group">
+            <input class="form-control" name="password" placeholder="Password" type="password">
+        </div>
+        <button class="btn btn-primary" type="submit">Log In</button>
+        <a href="/register" class="btn btn-secondary" type="button">Register</a>
+    </form>
+{% endblock %}
