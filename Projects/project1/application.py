@@ -2,9 +2,8 @@ import os
 import requests
 from dotenv import load_dotenv
 from collections import namedtuple
-import json
 
-from flask import Flask, session, render_template, request
+from flask import Flask, session, render_template, request, jsonify
 from flask_session import Session
 from sqlalchemy import create_engine
 from sqlalchemy.orm import scoped_session, sessionmaker
@@ -188,7 +187,36 @@ def book():
                    {"user_id": user_id, "isbn": isbn, "stars": stars, "comment": comment})
         db.commit()
 
-        book_data = db.execute("""SELECT * FROM "Books" WHERE isbn = :isbn""",
-                               {"isbn": isbn}).fetchone()
-
         return render_template("/book.html", title=title, author=author, year=year, avg_rating=avg_rating, ratings_count=ratings_count, review_stars=review_stars, review_comment=review_comment, isbn=isbn)
+
+
+@app.route("/api/<isbn>", methods=["GET"])
+def api(isbn):
+    # Get book information
+    book_data = db.execute("""SELECT * FROM "Books" WHERE isbn = :isbn""",
+                           {"isbn": isbn}).fetchone()
+
+    # Get reviews from Goodreads
+    load_dotenv(override=True)
+    KEY = os.getenv('key')
+    url = 'https://www.goodreads.com/book/review_counts.json'
+    params = {"key": KEY, "isbns": isbn}
+    response = requests.get(url, params=params)
+    goodreads_data = response.json()
+
+    # Assign variables
+    title = book_data[1]
+    author = book_data[2]
+    year = book_data[3]
+    isbn = book_data[0]
+    review_count = goodreads_data.get('books')[0].get('work_ratings_count')
+    avg_score = goodreads_data.get('books')[0].get('average_rating')
+
+    return jsonify({
+        "title": title,
+        "author": author,
+        "year": year,
+        "isbn": isbn,
+        "review_count": review_count,
+        "average_score": avg_score
+    })
