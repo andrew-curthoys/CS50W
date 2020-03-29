@@ -24,23 +24,30 @@
                     <th>Goodreads Avg Rating</th>
                     <th>Goodreads # of Ratings</th>
                     <th>User Rating</th>
-                    <th>User Review</th>
                     <th>ISBN</th>
                 </tr>
             </thead>
             <tbody>
-                    <tr>
-                        <td>{{ title }}</td>
-                        <td>{{ author }}</td>
-                        <td>{{ year }}</td>
-                        <td>{{ avg_rating }}</td>
-                        <td>{{ ratings_count }}</td>
-                        <td>{{ review_stars }}</td>
-                        <td>{{ review_comment }}</td>
-                        <td>{{ isbn }}</td>
+                <tr>
+                    <td>{{ title }}</td>
+                    <td>{{ author }}</td>
+                    <td>{{ year }}</td>
+                    <td>{{ avg_rating }}</td>
+                    <td>{{ ratings_count }}</td>
+                    <td>{{ review_stars }}</td>
+                    <td>{{ isbn }}</td>
+                </tr>
+                <tr>
+                    <table id="search-subresults" class="table table-striped table-bordered" style="width:100">
+                        <tr>
+                            <td>{{ review_comment }}</td>
+                        </tr>
+                    </table>
                 </tr>
             </tbody>
         </table>
+
+        {% block review %}{% endblock %}
 
         <script>
             $(document).ready(function() {

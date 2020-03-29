@@ -28,7 +28,10 @@ db = scoped_session(sessionmaker(bind=engine))
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "GET":
-        return render_template("index.html")
+        if session["username"] is None:
+            return render_template("index.html")
+        else:
+            return  render_template("search.html")
 
     if request.method == "POST":
         # Check that a username & password has been entered
@@ -137,40 +140,55 @@ def register():
 
 @app.route("/book", methods=["GET", "POST"])
 def book():
+    isbn = request.args.get("isbn")
+    user_id = session["user_id"]
+    review_data = db.execute("""SELECT * FROM "Reviews" WHERE user_id = :user_id AND isbn = :isbn""",
+                             {"user_id": user_id, "isbn": isbn}).fetchone()
+
+    book_data = db.execute("""SELECT * FROM "Books" WHERE isbn = :isbn""",
+                           {"isbn": isbn}).fetchone()
+
+    if review_data is None:
+        review_stars = "-"
+        review_comment = "No user review yet"
+
+    else:
+        # Get user review data
+        review_stars = review_data[2]
+        review_comment = review_data[3]
+
+    # Get book data
+    isbn = book_data[0]
+    title = book_data[1]
+    author = book_data[2]
+    year = book_data[3]
+
+    # Get reviews from Goodreads
+    load_dotenv(override=True)
+    KEY = os.getenv('key')
+    url = 'https://www.goodreads.com/book/review_counts.json'
+    params = {"key": KEY, "isbns": isbn}
+    response = requests.get(url, params=params)
+    goodreads_data = response.json()
+
+    # Parse data from Goodreads into lists to pass to results template
+    avg_rating = goodreads_data.get('books')[0].get('average_rating')
+    ratings_count = goodreads_data.get('books')[0].get('work_ratings_count')
+
     if request.method == "GET":
-        isbn = request.args.get("isbn")
-        user_id = session["user_id"]
-        review_data = db.execute("""SELECT * FROM "Reviews" WHERE user_id = :user_id AND isbn = :isbn""",
-                                 {"user_id": user_id, "isbn": isbn}).fetchone()
+        if review_data is None:
+            return render_template("/review.html", title=title, author=author, year=year, avg_rating=avg_rating, ratings_count=ratings_count, review_stars=review_stars, review_comment=review_comment, isbn=isbn)
+        else:
+            return render_template("/book.html", title=title, author=author, year=year, avg_rating=avg_rating, ratings_count=ratings_count, review_stars=review_stars, review_comment=review_comment, isbn=isbn)
+
+    if request.method == "POST":
+        stars = request.form.get("stars")
+        comment = request.form.get("comment")
+        db.execute("""INSERT INTO "Reviews" (user_id, isbn, stars, comment) VALUES (:user_id, :isbn, :stars, :comment)""",
+                   {"user_id": user_id, "isbn": isbn, "stars": stars, "comment": comment})
+        db.commit()
 
         book_data = db.execute("""SELECT * FROM "Books" WHERE isbn = :isbn""",
                                {"isbn": isbn}).fetchone()
-
-        if review_data is None:
-            review_stars = "-"
-            review_comment = "No user review yet"
-
-        else:
-            # Get user review data
-            review_stars = review_data[2]
-            review_comment = review_data[3]
-
-        # Get book data
-        isbn = book_data[0]
-        title = book_data[1]
-        author = book_data[2]
-        year = book_data[3]
-
-        # Get reviews from Goodreads
-        load_dotenv(override=True)
-        KEY = os.getenv('key')
-        url = 'https://www.goodreads.com/book/review_counts.json'
-        params = {"key": KEY, "isbns": isbn}
-        response = requests.get(url, params=params)
-        goodreads_data = response.json()
-
-        # Parse data from Goodreads into lists to pass to results template
-        avg_rating = goodreads_data.get('books')[0].get('average_rating')
-        ratings_count = goodreads_data.get('books')[0].get('work_ratings_count')
 
         return render_template("/book.html", title=title, author=author, year=year, avg_rating=avg_rating, ratings_count=ratings_count, review_stars=review_stars, review_comment=review_comment, isbn=isbn)

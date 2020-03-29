@@ -1,0 +1,24 @@
+{% extends "book.html" %}
+
+{% block review %}
+    <form action="/book?isbn={{ isbn }}" method="post">
+        <div class="form-group">
+            <h4>Book Review</h4>
+            <h6 class="text-muted">Fill out form below to add review for {{ title }}</h6>
+        </div>
+        <div class="form-group">
+            <label for="stars">Select a star value</label>
+            <select id="stars" name="stars">
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <input autocomplete="off" autofocus class="form-control" name="comment" placeholder="Write review here" type="text">
+        </div>
+            <button class="btn btn-primary" type="submit">Submit</button>
+    </form>
+{% endblock %}
