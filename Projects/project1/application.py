@@ -49,8 +49,6 @@ def index():
 
         # Check password against database
         db_password = login_data[2]
-        print(f"password = {password}")
-        print(f"db_password = {db_password}")
         if password != db_password:
             error_message = "Incorrect password, please retry"
             return render_template("error.html", error_message=error_message)
