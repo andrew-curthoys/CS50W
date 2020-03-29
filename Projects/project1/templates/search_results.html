@@ -30,7 +30,7 @@
                 {% for row in table_data %}
                     <tr>
 
-                        <td><a href="/book">{{ row['title'] }}</a></td>
+                        <td><a href="/book?isbn={{ row['isbn'] }}">{{ row['title'] }}</a></td>
                         <td>{{ row['author'] }}</td>
                         <td>{{ row['year'] }}</td>
                         <td>{{ row['avg_rating'] }}</td>
