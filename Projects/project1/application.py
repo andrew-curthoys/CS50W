@@ -220,3 +220,10 @@ def api(isbn):
         "review_count": review_count,
         "average_score": avg_score
     })
+
+
+@app.route("/logout", methods=["GET"])
+def logout():
+    session['username'] = None
+    return render_template("/logout.html")
+
