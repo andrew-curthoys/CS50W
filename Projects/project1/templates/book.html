@@ -10,7 +10,7 @@
 
         <form>
             <div class="card">
-                <h5 class="card-header">Book Search Results</h5>
+                <h5 class="card-header">Book Information</h5>
             </div>
         </form>
 
@@ -21,23 +21,24 @@
                     <th>Book</th>
                     <th>Author</th>
                     <th>Year Published</th>
-                    <th>Avg Rating</th>
-                    <th># of Ratings</th>
+                    <th>Goodreads Avg Rating</th>
+                    <th>Goodreads # of Ratings</th>
+                    <th>User Rating</th>
+                    <th>User Review</th>
                     <th>ISBN</th>
                 </tr>
             </thead>
             <tbody>
-                {% for row in table_data %}
                     <tr>
-
-                        <td><a href="/book">{{ row['title'] }}</a></td>
-                        <td>{{ row['author'] }}</td>
-                        <td>{{ row['year'] }}</td>
-                        <td>{{ row['avg_rating'] }}</td>
-                        <td>{{ row['ratings_count'] }}</td>
-                        <td>{{ row['isbn'] }}</td>
+                        <td>{{ title }}</td>
+                        <td>{{ author }}</td>
+                        <td>{{ year }}</td>
+                        <td>{{ avg_rating }}</td>
+                        <td>{{ ratings_count }}</td>
+                        <td>{{ review_stars }}</td>
+                        <td>{{ review_comment }}</td>
+                        <td>{{ isbn }}</td>
                 </tr>
-                {% endfor %}
             </tbody>
         </table>
 
